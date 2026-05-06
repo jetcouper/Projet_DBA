@@ -115,8 +115,8 @@ public class LogEntry {
 		str.append("Date : " + this.date + "\n");
 		str.append("Statut : " + this.status + "\n");
 		str.append("Raisons : " + this.reasons + "\n");
-		str.append("Planètes proches : " + this.nearPlanets + "\n");
-		str.append("Nom planète : " + this.planetName + "\n");
+		str.append("PlanÃ¨tes proches : " + this.nearPlanets + "\n");
+		str.append("Nom planÃ¨te : " + this.planetName + "\n");
 		str.append("Nom galaxie : " + this.galaxyName + "\n");
 		str.append("Habitable : " + this.habitable + "\n");
 		
