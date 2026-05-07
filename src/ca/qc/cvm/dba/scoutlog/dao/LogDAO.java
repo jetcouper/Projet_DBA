@@ -108,6 +108,13 @@ public class LogDAO {
 					params3.put("p8", log.isHabitable());
 					session.run("CREATE (l:Log {date:$p1, commandant:$p2, status:$p3 ,reason:$p5, planetName:$p6, isHabitable:$p8, displayName:$p6})", params3);
 
+					if (!checkIfExist(log.getPlanetName())){
+						session.run("CREATE (l:Log {planetName:$p6})",params3);
+					}
+					else{
+
+					}
+
 					if (log.getImage() != null) {
 						// l'entrée possède une image!
 						Database connection = BerkeleyConnection.getConnection();
@@ -161,14 +168,15 @@ public class LogDAO {
 		}
 		return conceptRetour;
 	}
-	private static Node getConceptNode(String concept) {
+	private static boolean checkIfExist(String planet) {
 		Node node = null;
+		boolean isExist = false;
 
 		try {
 			Session session = Neo4jConnection.getConnection();
 
 			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("p1", concept);
+			params.put("p1", planet);
 
 			StatementResult result = session.run("MATCH (l:Log) WHERE l.planetName = $p1 RETURN l",
 					params);
@@ -177,11 +185,14 @@ public class LogDAO {
 				Record record = result.next();
 				node = record.get("l").asNode();
 				System.out.println(node.get("planetName").asString());
-			}}
+				isExist = true;
+			}
+		}
+
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return node;
+		return isExist;
 	}
 	public static Relationship getRelationship(Node concept1, Node concept2, String relation) {
 		Relationship r = null;
@@ -327,11 +338,11 @@ public class LogDAO {
 	}
 	
 	/**
-	 * Permet de trouver une chemin pour se rendre d'une planète à une autre
+	 * Permet de trouver un chemin pour se rendre d'une planète à une autre
 	 * 
 	 * @param fromPlanet
 	 * @param toPlanet
-	 * @return Liste du nom des planètes à parcourir, incluant "fromPlanet" et "toPlanet", ou null si aucun chemin trouv�
+	 * @return Liste du nom des planètes à parcourir, incluant "fromPlanet" et "toPlanet", ou null si aucun chemin trouvé
 	 */
 	public static List<String> getTrajectory(String fromPlanet, String toPlanet) {
 		
