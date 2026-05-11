@@ -109,3 +109,76 @@
 2026-05-06 12:41:02.169+0000 INFO  creationDate: 2026-04-08T12:31:02.295Z
 2026-05-06 12:41:02.169+0000 INFO  Started.
 2026-05-06 13:26:47.118+0000 ERROR Client triggered an unexpected error [Neo.DatabaseError.General.UnknownError]: Lexical error at line 1, column 69.  Encountered: <EOF> after : "", reference 7f2dd402-73bd-49e0-b1a7-253c630a53bf.
+2026-05-07 20:42:04.245+0000 INFO  Starting...
+2026-05-07 20:42:05.800+0000 ERROR Failed to start Neo4j on localhost:7474.
+java.lang.RuntimeException: java.lang.UnsupportedOperationException: set
+	at org.neo4j.internal.unsafe.UnsafeUtil.allocateByteBuffer(UnsafeUtil.java:614) ~[neo4j-unsafe-5.3.0.jar:5.3.0]
+	at org.neo4j.io.memory.ByteBuffers.allocateDirect(ByteBuffers.java:58) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.memory.NativeScopedBuffer.<init>(NativeScopedBuffer.java:41) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.fs.DefaultFileSystemAbstraction$NativeByteBufferInputStream.<init>(DefaultFileSystemAbstraction.java:302) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.fs.DefaultFileSystemAbstraction.openFileInputStream(DefaultFileSystemAbstraction.java:244) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.fs.DefaultFileSystemAbstraction.openAsInputStream(DefaultFileSystemAbstraction.java:81) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.state.SimpleFileStorage.readState(SimpleFileStorage.java:50) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.dbms.identity.AbstractIdentityModule.readOrGenerate(AbstractIdentityModule.java:46) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.dbms.identity.DefaultIdentityModule.<init>(DefaultIdentityModule.java:40) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.dbms.identity.DefaultIdentityModule.<init>(DefaultIdentityModule.java:33) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.graphdb.factory.module.edition.CommunityEditionModule.<init>(CommunityEditionModule.java:129) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.build(DatabaseManagementServiceFactory.java:133) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.server.CommunityBootstrapper.createNeo(CommunityBootstrapper.java:36) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:164) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:85) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.server.CommunityEntryPoint.main(CommunityEntryPoint.java:30) ~[neo4j-5.3.0.jar:5.3.0]
+Caused by: java.lang.UnsupportedOperationException: set
+	at org.neo4j.internal.unsafe.UnsafeUtil.initDirectByteBuffer(UnsafeUtil.java:688) ~[neo4j-unsafe-5.3.0.jar:5.3.0]
+	at org.neo4j.internal.unsafe.UnsafeUtil.newDirectByteBuffer(UnsafeUtil.java:671) ~[neo4j-unsafe-5.3.0.jar:5.3.0]
+	at org.neo4j.internal.unsafe.UnsafeUtil.allocateByteBuffer(UnsafeUtil.java:612) ~[neo4j-unsafe-5.3.0.jar:5.3.0]
+	... 15 more
+2026-05-07 20:42:05.828+0000 INFO  Neo4j Server shutdown initiated by request
+2026-05-07 20:42:05.829+0000 INFO  Stopped.
+2026-05-07 20:44:19.172+0000 INFO  Starting...
+2026-05-07 20:44:20.271+0000 ERROR Failed to start Neo4j on localhost:7474.
+java.lang.RuntimeException: java.lang.UnsupportedOperationException: set
+	at org.neo4j.internal.unsafe.UnsafeUtil.allocateByteBuffer(UnsafeUtil.java:614) ~[neo4j-unsafe-5.3.0.jar:5.3.0]
+	at org.neo4j.io.memory.ByteBuffers.allocateDirect(ByteBuffers.java:58) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.memory.NativeScopedBuffer.<init>(NativeScopedBuffer.java:41) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.fs.DefaultFileSystemAbstraction$NativeByteBufferInputStream.<init>(DefaultFileSystemAbstraction.java:302) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.fs.DefaultFileSystemAbstraction.openFileInputStream(DefaultFileSystemAbstraction.java:244) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.fs.DefaultFileSystemAbstraction.openAsInputStream(DefaultFileSystemAbstraction.java:81) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.io.state.SimpleFileStorage.readState(SimpleFileStorage.java:50) ~[neo4j-io-5.3.0.jar:5.3.0]
+	at org.neo4j.dbms.identity.AbstractIdentityModule.readOrGenerate(AbstractIdentityModule.java:46) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.dbms.identity.DefaultIdentityModule.<init>(DefaultIdentityModule.java:40) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.dbms.identity.DefaultIdentityModule.<init>(DefaultIdentityModule.java:33) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.graphdb.factory.module.edition.CommunityEditionModule.<init>(CommunityEditionModule.java:129) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.graphdb.facade.DatabaseManagementServiceFactory.build(DatabaseManagementServiceFactory.java:133) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.server.CommunityBootstrapper.createNeo(CommunityBootstrapper.java:36) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:164) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.server.NeoBootstrapper.start(NeoBootstrapper.java:85) ~[neo4j-5.3.0.jar:5.3.0]
+	at org.neo4j.server.CommunityEntryPoint.main(CommunityEntryPoint.java:30) ~[neo4j-5.3.0.jar:5.3.0]
+Caused by: java.lang.UnsupportedOperationException: set
+	at org.neo4j.internal.unsafe.UnsafeUtil.initDirectByteBuffer(UnsafeUtil.java:688) ~[neo4j-unsafe-5.3.0.jar:5.3.0]
+	at org.neo4j.internal.unsafe.UnsafeUtil.newDirectByteBuffer(UnsafeUtil.java:671) ~[neo4j-unsafe-5.3.0.jar:5.3.0]
+	at org.neo4j.internal.unsafe.UnsafeUtil.allocateByteBuffer(UnsafeUtil.java:612) ~[neo4j-unsafe-5.3.0.jar:5.3.0]
+	... 15 more
+2026-05-07 20:44:20.289+0000 INFO  Neo4j Server shutdown initiated by request
+2026-05-07 20:44:20.290+0000 INFO  Stopped.
+2026-05-07 20:46:24.678+0000 INFO  Starting...
+2026-05-07 20:46:25.763+0000 INFO  This instance is ServerId{26776e79} (26776e79-67a5-4196-b8a0-33d1e1c1d381)
+2026-05-07 20:46:27.375+0000 INFO  ======== Neo4j 5.3.0 ========
+2026-05-07 20:46:30.899+0000 INFO  Bolt enabled on localhost:7687.
+2026-05-07 20:46:32.245+0000 INFO  Remote interface available at http://localhost:7474/
+2026-05-07 20:46:32.261+0000 INFO  id: 15CE465C61D2501A432106316528B91684D07BFD850B3DA98B535C7D43F6E65B
+2026-05-07 20:46:32.265+0000 INFO  name: system
+2026-05-07 20:46:32.265+0000 INFO  creationDate: 2026-04-08T12:31:02.295Z
+2026-05-07 20:46:32.266+0000 INFO  Started.
+2026-05-08 02:56:52.704+0000 INFO  Neo4j Server shutdown initiated by request
+2026-05-08 02:56:52.707+0000 INFO  Stopping...
+2026-05-08 02:56:57.841+0000 INFO  Stopped.
+2026-05-10 14:32:12.126+0000 INFO  Starting...
+2026-05-10 14:32:13.412+0000 INFO  This instance is ServerId{26776e79} (26776e79-67a5-4196-b8a0-33d1e1c1d381)
+2026-05-10 14:32:15.034+0000 INFO  ======== Neo4j 5.3.0 ========
+2026-05-10 14:32:18.027+0000 INFO  Bolt enabled on localhost:7687.
+2026-05-10 14:32:19.547+0000 INFO  Remote interface available at http://localhost:7474/
+2026-05-10 14:32:19.555+0000 INFO  id: 15CE465C61D2501A432106316528B91684D07BFD850B3DA98B535C7D43F6E65B
+2026-05-10 14:32:19.556+0000 INFO  name: system
+2026-05-10 14:32:19.556+0000 INFO  creationDate: 2026-04-08T12:31:02.295Z
+2026-05-10 14:32:19.557+0000 INFO  Started.
