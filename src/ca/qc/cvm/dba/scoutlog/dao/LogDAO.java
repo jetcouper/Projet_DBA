@@ -83,15 +83,14 @@ public class LogDAO {
 						);
 					}
 
-
-
                     if(log.getNearPlanets() != null){
                         for (String voisin : log.getNearPlanets()) {
                             Map<String, Object> routeParams = new  HashMap<>();
                             routeParams.put("p6", log.getPlanetName());
                             routeParams.put("voisin", voisin);
                             session.run("MATCH (p1:Planete {nom:$p6}), (p2:Planete {nom:$voisin}) " +
-                                        "MERGE (p1)-[:ROUTE]->(p2)", routeParams);
+                                        "MERGE (p1)-[:ROUTE]->(p2)" +
+									"MERGE (p2)-[:ROUTE]->(p1)", routeParams);
                         }
                     }
 
@@ -381,7 +380,7 @@ public class LogDAO {
 			params.put("p1", limit);
 
 			StatementResult result = session.run("MATCH (l:Log) " +
-					"OPTIONAL MATCH (l)-[:CONCERNE_PLANETE]->(p:Planete) WHERE p IS NOT NULL " +
+					"MATCH (l)-[:CONCERNE_PLANETE]->(p:Planete) WHERE p IS NOT NULL " +
 					"WITH l, p " +
 					"RETURN p.nom AS nomPlanete " +
 					"ORDER BY l.date DESC " +
@@ -427,8 +426,24 @@ public class LogDAO {
 	 * @return Liste du nom des planètes à parcourir, incluant "fromPlanet" et "toPlanet", ou null si aucun chemin trouvé
 	 */
 	public static List<String> getTrajectory(String fromPlanet, String toPlanet) {
-
+		List<String> planetes = new ArrayList<>();
 		try {
+			Map<String, Object> params = new HashMap<String, Object>();
+			Session session = Neo4jConnection.getConnection();
+			params.put("p1", fromPlanet);
+			params.put("p2", toPlanet);
+			StatementResult result = session.run("MATCH (p1:Planete {nom: $p1}), (p2:Planete {nom: $p2}) \n" +
+					"MATCH p = shortestPath((p1)-[*..]->(p2))\n" +
+					"UNWIND nodes(p) AS planete\n" +
+					"RETURN planete.nom AS nom",params);
+
+			if(!result.hasNext()) {
+				planetes = null;
+			}
+			while(result.hasNext()) {
+				Record record = result.next();
+				planetes.add(record.get("nom").asString());
+			}
 
 		}
 		catch (Exception e) {
@@ -436,7 +451,7 @@ public class LogDAO {
 		}
 
 
-		return null;
+		return planetes;
 	}
 
 	/**
@@ -448,7 +463,25 @@ public class LogDAO {
 	public static List<String> getExploredGalaxies(int limit) {
 		List<String> galaxyList = new ArrayList<String>();
 
+		try {
+			Map<String, Object> params = new HashMap<String, Object>();
+			Session session = Neo4jConnection.getConnection();
+			params.put("p1",limit);
+			StatementResult result = session.run("MATCH (p:Planete)-[:DANS_GALAXIE]->(g:Galaxie)\n" +
+					"RETURN g.nom AS nom, COUNT(p) AS nombre \n" +
+					"ORDER BY COUNT(p) DESC \n" +
+					"LIMIT $p1", params);
 
+			while(result.hasNext()) {
+				Record record = result.next();
+				galaxyList.add(record.get("nom").asString() + " ( " + record.get("nombre").asInt() + " planètes visitées ), ");
+			}
+
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 
 
 		return galaxyList;
