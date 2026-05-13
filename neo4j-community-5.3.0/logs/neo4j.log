@@ -182,3 +182,6 @@ Caused by: java.lang.UnsupportedOperationException: set
 2026-05-10 14:32:19.556+0000 INFO  name: system
 2026-05-10 14:32:19.556+0000 INFO  creationDate: 2026-04-08T12:31:02.295Z
 2026-05-10 14:32:19.557+0000 INFO  Started.
+2026-05-13 20:12:41.256+0000 INFO  Neo4j Server shutdown initiated by request
+2026-05-13 20:12:41.262+0000 INFO  Stopping...
+2026-05-13 20:12:46.572+0000 INFO  Stopped.
