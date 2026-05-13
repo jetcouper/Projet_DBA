@@ -11,4 +11,4 @@ Les index sont au début de mon fichier LogDAO dans le bloc d'initialisation sta
 Se sont des index simples (Simple Property Index) non composite.
 
 ## IA
-L'IA à été utilisé seulement pour expliquer certaine érreurs d'innatention, comme asString au-lieux de toString, des explication sur le fonctionnement de OPTIONAL MATCH vs MATCH (Recherche sur le Web), etc. Il n'y a pas eu de génération de code avec l'IA, 100% fait à la main.
+L'IA a été utilisée uniquement pour expliquer certaines erreurs d'inattention (ex. : asString au lieu de toString) et pour clarifier des concepts comme le fonctionnement d'OPTIONAL MATCH vs MATCH. Aucun code n'a été généré par l'IA — le code est entièrement écrit à la main.
