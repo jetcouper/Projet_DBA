@@ -15,6 +15,22 @@ import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 
 public class LogDAO {
+
+	static {
+		try {
+			Session session = Neo4jConnection.getConnection();
+			session.run("CREATE INDEX idx_log_date IF NOT EXISTS FOR (l:Log) ON (l.date)");
+
+			session.run("CREATE INDEX idx_nom_galaxie IF NOT EXISTS FOR (g:Galaxie) ON (g.nom)");
+
+			session.run("CREATE INDEX idx_nom_planete IF NOT EXISTS FOR (p:Planete) ON (p.nom)");
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Méthode permettant d'ajouter une entrée
 	 * 
@@ -166,7 +182,6 @@ public class LogDAO {
 		LogEntry logEntry = null;
 		try {
 			Map<String, Object> params = new HashMap<String, Object>();
-			List<String> planets = null;
 			Session session = Neo4jConnection.getConnection();
 			params.put("p1", position);
 
@@ -176,32 +191,34 @@ public class LogDAO {
 					"OPTIONAL MATCH (p)-[:ROUTE]->(voisin:Planete) " +
 					"RETURN collect(voisin.nom) AS planeteProche, l.reason AS reason, l.date AS date, l.commandant AS commandant,l.status AS status, p.nom AS nomPlanet, p.habitable AS habitable, g.nom AS nomGalaxie " +
 					"ORDER BY l.date DESC SKIP $p1 LIMIT 1", params);
+			if(result.hasNext()){
+				Record record = result.next();
+				logEntry = new LogEntry(record.get("date").asString(), record.get("commandant").asString(),record.get("status").asString());
+				if (!record.get("habitable").isNull()) {
+					logEntry.setHabitable(record.get("habitable").asBoolean());
+				}
+				logEntry.setPlanetName(record.get("nomPlanet").asString());
+				logEntry.setReasons(record.get("reason").asString());
+				logEntry.setGalaxyName(record.get("nomGalaxie").asString());
+				logEntry.setNearPlanets(record.get("planeteProche").asList(v -> v.asString()));
 
-			Record record = result.next();
-			logEntry = new LogEntry(record.get("date").asString(), record.get("commandant").asString(),record.get("status").asString());
-			if (!record.get("habitable").isNull()) {
-				logEntry.setHabitable(record.get("habitable").asBoolean());
-			}
-			logEntry.setPlanetName(record.get("nomPlanet").asString());
-			logEntry.setReasons(record.get("reason").asString());
-			logEntry.setGalaxyName(record.get("nomGalaxie").asString());
-			logEntry.setNearPlanets(record.get("planeteProche").asList(v -> v.asString()));
+				if(record.get("status").asString().equals("Exploration")){
+					Database connection = BerkeleyConnection.getConnection();
+					try {
+						DatabaseEntry theKey = new DatabaseEntry(record.get("nomPlanet").asString().getBytes("UTF-8"));
+						DatabaseEntry theData = new DatabaseEntry();
 
-			if(record.get("status").asString().equals("Exploration")){
-				Database connection = BerkeleyConnection.getConnection();
-				try {
-					DatabaseEntry theKey = new DatabaseEntry(record.get("nomPlanet").asString().getBytes("UTF-8"));
-					DatabaseEntry theData = new DatabaseEntry();
+						if (connection.get(null,theKey,theData,null) == OperationStatus.SUCCESS){
+							logEntry.setImage(theData.getData());
+						}
 
-					if (connection.get(null,theKey,theData,null) == OperationStatus.SUCCESS){
-						logEntry.setImage(theData.getData());
+
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-
-
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
+
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -228,33 +245,16 @@ public class LogDAO {
 												"OPTIONAL MATCH (l:Log)-[:CONCERNE_PLANETE]->(p:Planete) " +
 												"RETURN p.nom AS nomPlanete, l.status AS status " +
 												"ORDER BY l.date DESC SKIP $p1 LIMIT 1", params);
-			Record record = result.next();
-
-
-			session.run("MATCH (l:Log) " +
-					"OPTIONAL MATCH (l:Log)-[:CONCERNE_PLANETE]->(p:Planete) " +
-					"WITH l " +
-					"ORDER BY l.date DESC " +
-					"SKIP $p1 " +
-					"LIMIT 1 " +
-					"DETACH DELETE l" , params);
-
-			if(record.get("status").asString().equals("Exploration")){
-				Database connection = BerkeleyConnection.getConnection();
-				try {
-					DatabaseEntry theKey = new DatabaseEntry(record.get("nomPlanete").asString().getBytes("UTF-8"));
-					DatabaseEntry theData = new DatabaseEntry();
-
-					if (connection.get(null,theKey,theData,null) == OperationStatus.SUCCESS){
-						connection.delete(null,theKey);
-					}
-
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if(result.hasNext()){
+				session.run("MATCH (l:Log) " +
+						"OPTIONAL MATCH (l:Log)-[:CONCERNE_PLANETE]->(p:Planete) " +
+						"WITH l " +
+						"ORDER BY l.date DESC " +
+						"SKIP $p1 " +
+						"LIMIT 1 " +
+						"DETACH DELETE l" , params);
+				success = true;
 			}
-			success = true;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -277,7 +277,7 @@ public class LogDAO {
 		try {
 			Session session = Neo4jConnection.getConnection();
 			StatementResult result = session.run("MATCH (l:Log) RETURN COUNT(l) AS compte");
-			compte = Integer.parseInt(result.next().get("compte").toString());
+			compte = result.next().get("compte").asInt();
 
 		}
 		catch (Exception e) {
@@ -325,8 +325,9 @@ public class LogDAO {
 													"MATCH (e:Log {status: 'Exploration'}) " +
 													"WITH COUNT(e) AS nbExploration, total " +
 													"RETURN (nbExploration * 100 / total) AS PercentageExploration");
-
-			nbExploration = (result.next().get("PercentageExploration")).asInt();
+			if(result.hasNext()){
+				nbExploration = (result.next().get("PercentageExploration")).asInt();
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -408,9 +409,16 @@ public class LogDAO {
 		String nomGalaxy = "";
 		try {
 			Session session = Neo4jConnection.getConnection();
-			StatementResult result = session.run("MATCH (p:Planete)-[:DANS_GALAXIE]->(g:Galaxie) WHERE p.habitable = true RETURN g.nom AS nom, COUNT(p) AS nombre ORDER BY COUNT(p) DESC LIMIT 1");
+			StatementResult result = session.run("MATCH (p:Planete)-[:DANS_GALAXIE]->(g:Galaxie) " +
+					"WHERE p.habitable = true " +
+					"RETURN g.nom AS nom, COUNT(p) AS nombre " +
+					"ORDER BY COUNT(p) DESC " +
+					"LIMIT 1");
 
-			nomGalaxy = (result.next().get("nom")).asString();
+			if(result.hasNext()) {
+				nomGalaxy = (result.next().get("nom")).asString();
+			}
+
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -433,7 +441,7 @@ public class LogDAO {
 			params.put("p1", fromPlanet);
 			params.put("p2", toPlanet);
 			StatementResult result = session.run("MATCH (p1:Planete {nom: $p1}), (p2:Planete {nom: $p2}) \n" +
-					"MATCH p = shortestPath((p1)-[*..]->(p2))\n" +
+					"MATCH p = shortestPath((p1)-[:ROUTE*]->(p2))\n" +
 					"UNWIND nodes(p) AS planete\n" +
 					"RETURN planete.nom AS nom",params);
 
