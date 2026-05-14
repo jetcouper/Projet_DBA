@@ -19,12 +19,10 @@ public class LogDAO {
 	static {
 		try {
 			Session session = Neo4jConnection.getConnection();
-			session.run("CREATE INDEX idx_log_date IF NOT EXISTS FOR (l:Log) ON (l.date)");
-
 			session.run("CREATE INDEX idx_nom_galaxie IF NOT EXISTS FOR (g:Galaxie) ON (g.nom)");
 
 			session.run("CREATE INDEX idx_nom_planete IF NOT EXISTS FOR (p:Planete) ON (p.nom)");
-
+			session.run("CREATE CONSTRAINT unique_date_constraint IF NOT EXISTS FOR (l:Log) REQUIRE l.date IS UNIQUE");
 
 		} catch (Exception e) {
 			e.printStackTrace();

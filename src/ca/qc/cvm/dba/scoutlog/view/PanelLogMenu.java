@@ -82,6 +82,7 @@ public class PanelLogMenu extends CommonPanel {
 		info = new JTextArea();
 		info.setEditable(false);
 		info.setOpaque(false);
+		info.setLineWrap(true);
 		info.setForeground(Color.WHITE);
 		info.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		this.addField(info, 20, 100, 400, 400);
